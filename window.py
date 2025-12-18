@@ -4,6 +4,7 @@ from PySide6.QtCore import Qt
 from login import LoginScreen
 
 
+
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -15,7 +16,7 @@ class Window(QMainWindow):
         self.setCentralWidget(self.stacked_widget)
 
         self.login = LoginScreen(self.stacked_widget)
-        # self.login.setFixedSize(540, 170)
+        # self.login.setFixedSize(540, 170))
 
         container = QWidget()
         container.setObjectName("container")
@@ -29,6 +30,7 @@ class Window(QMainWindow):
         #adiciona o login a lista de paginas e define como a primeira
         self.stacked_widget.addWidget(container)
         self.stacked_widget.setCurrentIndex(0)
+
         self.show()
 
 
