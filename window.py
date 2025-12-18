@@ -2,6 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QWidget, QVBoxLayout, QGridLayout
 from PySide6.QtCore import Qt
 from login import LoginScreen
+from test_screen import Tela2
 
 
 class Window(QMainWindow):
@@ -16,6 +17,7 @@ class Window(QMainWindow):
 
         self.login = LoginScreen(self.stacked_widget)
         # self.login.setFixedSize(540, 170)
+        self.test_screen = Tela2(self.stacked_widget)
 
         container = QWidget()
         container.setObjectName("container")
@@ -29,6 +31,7 @@ class Window(QMainWindow):
         #adiciona o login a lista de paginas e define como a primeira
         self.stacked_widget.addWidget(container)
         self.stacked_widget.setCurrentIndex(0)
+        self.stacked_widget.addWidget(self.test_screen)
         self.show()
 
 

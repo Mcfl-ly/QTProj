@@ -1,7 +1,7 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QWidget, QLabel, QVBoxLayout, QGridLayout, QHBoxLayout, QLabel, QSizePolicy, \
-    QWidget, QLineEdit
+from PySide6.QtWidgets import   QVBoxLayout, QGridLayout, QWidget, QPushButton
 from PySide6.QtCore import Qt
 from textLine import TextBox
+from button import Button
 
 
 
@@ -31,10 +31,14 @@ class LoginScreen(QWidget):
         self.password_textbox = TextBox()
         self.password_textbox.setPlaceholderText("Password")
         self.password_textbox.setEchoMode(TextBox.EchoMode.Password)
+        self.button = Button('ENTRAR')
+        self.button.clicked.connect(self.go_to_page2)
 
         #adicionando as caixas de texto a tela de login
-        screen_layout.addWidget(self.login_textbox)
-        screen_layout.addWidget(self.password_textbox)
+        screen_layout.addWidget(self.login_textbox, alignment=Qt.AlignmentFlag.AlignCenter)
+        screen_layout.addWidget(self.password_textbox, alignment=Qt.AlignmentFlag.AlignCenter)
+        screen_layout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
+
 
         #adicionando a telinha de login ao widget inteiro e alinhando ao centro
         tela_layout.addWidget(self.screen,1,1,alignment=Qt.AlignmentFlag.AlignCenter)
@@ -53,3 +57,7 @@ class LoginScreen(QWidget):
                        border: 2px solid #ff1d8d;
                    }
                """)
+
+
+    def go_to_page2(self):
+        self.stacked_widget.setCurrentIndex(1)

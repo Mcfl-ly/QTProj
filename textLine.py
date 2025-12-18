@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QWidget, QLabel, QVBoxLayout, QGridLayout, QHBoxLayout, QLabel, QSizePolicy, \
-    QWidget, QLineEdit
+from PySide6.QtWidgets import  QLineEdit
 
 class TextBox(QLineEdit):
     def __init__(self):
