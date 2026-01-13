@@ -27,13 +27,15 @@ class AddSrc(QWidget):
 
         #textos das caixas
         self.addButton = Button("Adicionar Item")
+        self.addButton.clicked.connect(self.go_to_page_add)
+
         self.srcButton = Button("Pesquisar Item")
         #adicionando as caixas de texto a tela
         screen_layout.addWidget(self.addButton)
         screen_layout.addWidget(self.srcButton)
 
 
-        #adicionando a telinha de login ao widget inteiro e alinhando ao centro
+
         tela_layout.addWidget(self.screen,1,1,alignment=Qt.AlignmentFlag.AlignCenter)
         tela_layout.setRowStretch(0, 1)
         tela_layout.setRowStretch(2, 1)
@@ -52,5 +54,5 @@ class AddSrc(QWidget):
                """)
 
 
-    def go_to_page2(self):
-        self.stacked_widget.setCurrentIndex(1)
+    def go_to_page_add(self):
+        self.stacked_widget.setCurrentIndex(2)
