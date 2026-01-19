@@ -1,15 +1,21 @@
-from PySide6.QtWidgets import   QVBoxLayout, QGridLayout, QWidget, QPushButton
+from PySide6.QtWidgets import   QVBoxLayout, QGridLayout, QWidget, QPushButton, QMessageBox
 from PySide6.QtCore import Qt
 from textLine import TextBox
 from button import Button
+import sqlite3
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
+login = os.getenv("LOGIN")
+password = os.getenv("PASSWORD")
 
 class LoginScreen(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
         self.stacked_widget = stacked_widget
-
+        self.create_db(login, password)
         #cria o layout geral do widget de login
         tela_layout = QGridLayout(self)
         tela_layout.setContentsMargins(0, 0, 0, 0)
@@ -32,13 +38,15 @@ class LoginScreen(QWidget):
         self.password_textbox.setPlaceholderText("Password")
         self.password_textbox.setEchoMode(TextBox.EchoMode.Password)
         self.button = Button('ENTRAR')
-        self.button.clicked.connect(self.go_to_page2)
+        self.password_textbox.returnPressed.connect(self.button.click)
+        self.login_textbox.returnPressed.connect(self.button.click)
+
+        self.button.clicked.connect(self.authenticate)
 
         #adicionando as caixas de texto a tela de login
         screen_layout.addWidget(self.login_textbox, alignment=Qt.AlignmentFlag.AlignCenter)
         screen_layout.addWidget(self.password_textbox, alignment=Qt.AlignmentFlag.AlignCenter)
         screen_layout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
-
 
         #adicionando a telinha de login ao widget inteiro e alinhando ao centro
         tela_layout.addWidget(self.screen,1,1,alignment=Qt.AlignmentFlag.AlignCenter)
@@ -58,6 +66,27 @@ class LoginScreen(QWidget):
                    }
                """)
 
-
     def go_to_page2(self):
         self.stacked_widget.setCurrentIndex(1)
+
+    def create_db(self, login, password):
+        db = sqlite3.connect('banco.db')
+        cursor = db.cursor()
+        cursor.execute("CREATE TABLE IF NOT EXISTS users (ID INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(30), password VARCHAR(30), UNIQUE(login, password))")
+        cursor.execute(f"INSERT OR IGNORE INTO users (login, password) VALUES ('{login}','{password}')")
+        db.commit()
+
+    def authenticate(self):
+        login_input = self.login_textbox.text()
+        password_input = self.password_textbox.text()
+
+        db = sqlite3.connect('banco.db')
+        cursor = db.cursor()
+        cursor.execute(f"SELECT * FROM users WHERE login = '{login_input}' AND password = '{password_input}'")
+        row = cursor.fetchone()
+        if row:
+            self.go_to_page2()
+        else:
+            msg_error = QMessageBox()
+            msg_error.information(self, "Login Incorreto", "Login ou senha incorretos.")
+
