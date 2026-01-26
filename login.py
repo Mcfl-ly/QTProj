@@ -73,6 +73,9 @@ class LoginScreen(QWidget):
         db = sqlite3.connect('banco.db')
         cursor = db.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS users (ID INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(30), password VARCHAR(30), UNIQUE(login, password))")
+
+        cursor.execute("CREATE TABLE IF NOT EXISTS filial ()")
+
         cursor.execute(f"INSERT OR IGNORE INTO users (login, password) VALUES ('{login}','{password}')")
         db.commit()
 
