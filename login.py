@@ -5,6 +5,8 @@ from button import Button
 import sqlite3
 from dotenv import load_dotenv
 import os
+from num2words import num2words
+
 
 load_dotenv()
 
@@ -74,7 +76,25 @@ class LoginScreen(QWidget):
         cursor = db.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS users (ID INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(30), password VARCHAR(30), UNIQUE(login, password))")
 
-        cursor.execute("CREATE TABLE IF NOT EXISTS filial ()")
+        cursor.execute("CREATE TABLE IF NOT EXISTS filiais (ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "filial VARCHAR(40),"
+                       "endereco VARCHAR(40),"
+                       "contato INTEGER,"
+                       "UNIQUE(filial, endereco, contato))")
+        for i in range(1,4):
+            num = num2words(number=i, lang='pt-br')
+            cursor.execute(f"INSERT OR IGNORE INTO filiais (filial, endereco, contato) VALUES ('filial{i}','endereço da {num}','{int(str(i) * 10)}')")
+            # cursor.execute("INSERT OR IGNORE INTO filiais (filial, endereco, contato) VALUES ('filial2','endereço da segunda','2222222222')")
+            # cursor.execute("INSERT OR IGNORE INTO filiais (filial, endereco, contato) VALUES ('filial3','endereço da terceira','3333333333')")
+
+        for i in range(1,4):
+            cursor.execute(f"CREATE TABLE IF NOT EXISTS filial{i}_produtos (ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                           "nome VARCHAR(30),"
+                           "valor FLOAT,"
+                           "categoria VARCHAR(30),"
+                           "filial VARCHAR(40),"
+                           "entrada DATE,"
+                           "quantidade INTEGER)")
 
         cursor.execute(f"INSERT OR IGNORE INTO users (login, password) VALUES ('{login}','{password}')")
         db.commit()

@@ -42,6 +42,11 @@ class AddItem(QWidget):
         self.combo.model().item(0).setEnabled(False)
         self.combo.addItems(["opção 1", "opção 2", "opção 3"])
 
+        self.banco = sqlite3.connect('banco.db')
+        self.cursor = self.banco.cursor()
+        self.cursor.execute("SELECT * FROM filiais")
+        self.all_fil = self.cursor.fetchall()
+
         self.combo2 = QComboBox()
         self.combo2.setStyleSheet("QComboBox{"
                             "color: white;"
@@ -53,7 +58,8 @@ class AddItem(QWidget):
         self.combo2.setEditable(False)
         self.combo2.addItem("Filial")
         self.combo2.model().item(0).setEnabled(False)
-        self.combo2.addItems(["filial 1", "filial 2", "filial 3"])
+        for i in self.all_fil:
+            self.combo2.addItems([i[1]])
 
 
 
@@ -76,18 +82,6 @@ class AddItem(QWidget):
         self.back_button = Button("< Voltar")
         self.back_button.clicked.connect(self.go_back)
 
-
-        #PEGANDO OS DADOS INSERIDOS
-
-
-
-
-
-
-
-
-
-
         # adicionando as caixas de texto a tela
         screen_layout.addWidget(self.item_name, alignment=Qt.AlignmentFlag.AlignCenter)
 
@@ -106,9 +100,6 @@ class AddItem(QWidget):
         tela_layout.setColumnStretch(2, 1)
 
     def adicionar(self):
-        banco = sqlite3.connect('banco.db')
-        cursor = banco.cursor()
-
         data = datetime.now().strftime('%Y-%m-%d')
         prod_name = self.item_name.text()
         prod_value = self.preco.text()
@@ -116,7 +107,20 @@ class AddItem(QWidget):
         filial = self.combo2.currentText()
         quantidade = int(self.quantidade.text())
 
-        print(prod_name, prod_value, prod_categoria, filial)
+        self.cursor.execute(f"SELECT * FROM {filial}_produtos WHERE nome = '{prod_name}'")
+        registro = self.cursor.fetchone()
+
+        if registro is None:
+            self.cursor.execute(f"INSERT INTO {filial}_produtos (nome, valor, categoria, filial, entrada, quantidade) VALUES ('{prod_name}','{prod_value}',"
+                                f"'{prod_categoria}','{filial}','{data}','{quantidade}')")
+            self.banco.commit()
+        else:
+            id = registro[0]
+            sql = f"""UPDATE {filial}_produtos
+                    SET quantidade = quantidade + {quantidade}, entrada = '{data}, valor = '{prod_value}'
+                    WHERE ID = {id};"""
+            self.cursor.execute(sql)
+            self.banco.commit()
 
     def go_back(self):
         self.stacked_widget.setCurrentIndex(1)
